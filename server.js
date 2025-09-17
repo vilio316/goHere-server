@@ -1,21 +1,29 @@
 const express = require('express')
 const app = express();
 const cors = require('cors');
-const axios = require("axios")
+const UserModel = require('./models/userModel')
+//const axios = require("axios")
+app.use(express.json())
 
 const corsOptions = {
     origin: ['http://localhost:5173']
 };
 const dotenv = require('dotenv')
 dotenv.config()
+const mongoose = require('mongoose')
 
-const {searchByTxt, fetchByID} = require('./maps_requests')
+async function mainMongConnect(){
+    await mongoose.connect(process.env.MONGO_STRING)
+}
+
+mainMongConnect()
+
+const {searchByTxt} = require('./maps_requests')
 
 
 app.use(cors(corsOptions))
 
 app.get('/api', (req, res) => {
-   
     res.json({"fruits" : ["a", "b", "c", "jackfruit"]});
 })
 
@@ -26,6 +34,13 @@ app.get('/search/:query' , async (req, res)=> {
       requestResults
 )
 })
+
+app.post('/sign-up', (req, res) => {
+    UserModel.create(req.body)
+    .then(console.log(req.body))
+    .then((users) => res.json(users))
+})
+
 
 app.get('/geocoded_location/:lat/:long', async(req, res) => {
     const location_details = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.params.lat},${req.params.long}&key=${process.env.PLACES_API_KEY}`)
