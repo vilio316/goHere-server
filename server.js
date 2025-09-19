@@ -2,7 +2,6 @@ const express = require('express')
 const app = express();
 const cors = require('cors');
 const UserModel = require('./models/userModel')
-//const axios = require("axios")
 app.use(express.json())
 
 const corsOptions = {
@@ -13,7 +12,7 @@ dotenv.config()
 const mongoose = require('mongoose')
 
 async function mainMongConnect(){
-    await mongoose.connect(process.env.MONGO_STRING)
+    await mongoose.connect(process.env.MONGO_STRING).then(console.log("Connected!"))
 }
 
 mainMongConnect()
@@ -41,6 +40,17 @@ app.post('/sign-up', (req, res) => {
     .then((users) => res.json(users))
 })
 
+app.post('/sign-in', (req, res) => {
+    UserModel.findOne({user: req.body.email}).then(
+        (results) => {try{
+            console.log(results)
+        } catch(error){
+            console.log(error)
+            res.json({'errorMessage' : error})
+        }
+    }
+    )
+})
 
 app.get('/geocoded_location/:lat/:long', async(req, res) => {
     const location_details = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.params.lat},${req.params.long}&key=${process.env.PLACES_API_KEY}`)
