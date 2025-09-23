@@ -1,12 +1,14 @@
 const express = require('express')
 const app = express();
 const cors = require('cors');
-const UserModel = require('./models/userModel')
+const cookieParser = require('cookie-parser')
+const authRoute = require('./routes/authRoute')
 app.use(express.json())
 
 const corsOptions = {
-    origin: ['http://localhost:5173']
+    origin: ['http://localhost:5173'], credentials: true
 };
+app.use(cors(corsOptions));
 const dotenv = require('dotenv')
 dotenv.config()
 const mongoose = require('mongoose')
@@ -17,10 +19,11 @@ async function mainMongConnect(){
 
 mainMongConnect()
 
-const {searchByTxt} = require('./maps_requests')
+const {searchByTxt} = require('./maps_requests');
+const { Signup } = require('./controllers/authController');
+app.use(cookieParser())
 
 
-app.use(cors(corsOptions))
 
 app.get('/api', (req, res) => {
     res.json({"fruits" : ["a", "b", "c", "jackfruit"]});
@@ -34,12 +37,8 @@ app.get('/search/:query' , async (req, res)=> {
 )
 })
 
-app.post('/sign-up', (req, res) => {
-    UserModel.create(req.body)
-    .then(console.log(req.body))
-    .then((users) => res.json(users))
-})
 
+/*
 app.post('/sign-in', (req, res) => {
     UserModel.findOne({user: req.body.email}).then(
         (results) => {try{
@@ -51,12 +50,15 @@ app.post('/sign-in', (req, res) => {
     }
     )
 })
+*/
 
 app.get('/geocoded_location/:lat/:long', async(req, res) => {
     const location_details = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.params.lat},${req.params.long}&key=${process.env.PLACES_API_KEY}`)
     const location_res = await location_details.json()
     res.json(location_res)
 })
+
+app.use('/auth', authRoute)
 
 app.listen(8090, ()=> {
     console.log("Server started on port 8090");

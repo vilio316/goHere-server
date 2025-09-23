@@ -7,9 +7,11 @@ const userTestSchema = new Schema({
         required: true,
         unique: true
     },
-    password: String, 
+    password:{
+        type: String,
+        required: true
+    }
 })
-
 userTestSchema.pre('save', async function(){
     this.password = await bcrypt.hash(this.password, 12)
 })
