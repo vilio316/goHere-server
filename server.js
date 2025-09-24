@@ -20,7 +20,6 @@ async function mainMongConnect(){
 mainMongConnect()
 
 const {searchByTxt} = require('./maps_requests');
-const { Signup } = require('./controllers/authController');
 app.use(cookieParser())
 
 
@@ -37,6 +36,12 @@ app.get('/search/:query' , async (req, res)=> {
 )
 })
 
+app.get('/distance/:sourceLat/:sourceLong/:destLat/:destLong', async (req, res) => {
+    const getDistanceFromMapbox = await fetch(`
+        https://api.mapbox.com/directions-matrix/v1/mapbox/driving/${req.params.sourceLat},${req.params.sourceLong};${req.params.destLat},${req.params.destLong}?access_token=${process.env.MAPBOX_2}&annotations=distance,duration`)
+    const results = await getDistanceFromMapbox.json()
+    res.json(results)
+} )
 
 /*
 app.post('/sign-in', (req, res) => {
