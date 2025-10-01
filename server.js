@@ -22,8 +22,6 @@ mainMongConnect()
 const {searchByTxt} = require('./maps_requests');
 app.use(cookieParser())
 
-
-
 app.get('/api', (req, res) => {
     res.json({"fruits" : ["a", "b", "c", "jackfruit"]});
 })
@@ -42,20 +40,6 @@ app.get('/distance/:sourceLat/:sourceLong/:destLat/:destLong', async (req, res) 
     const results = await getDistanceFromMapbox.json()
     res.json(results)
 } )
-
-/*
-app.post('/sign-in', (req, res) => {
-    UserModel.findOne({user: req.body.email}).then(
-        (results) => {try{
-            console.log(results)
-        } catch(error){
-            console.log(error)
-            res.json({'errorMessage' : error})
-        }
-    }
-    )
-})
-*/
 
 app.get('/geocoded_location/:lat/:long', async(req, res) => {
     const location_details = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${req.params.lat},${req.params.long}&key=${process.env.PLACES_API_KEY}`)

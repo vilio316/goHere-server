@@ -1,5 +1,7 @@
 const User = require('../models/userModel')
 const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 const { createSecretToken } = require('../utils/SecretToken')
 
 module.exports.Signup = async(req, res, next) =>{
@@ -34,17 +36,31 @@ module.exports.SignIn = async (req, res, next) => {
     }
     const authCheck = await bcrypt.compare(pwd, user.password)
     if(!authCheck){
-      return res.status(401).json({message: 'Incorrect password'})
+      return res.status(401).json({message: 'Incorrect password', success: false})
     }
     const user_token = createSecretToken(user._id)
     res.cookie("token", user_token, {
        withCredentials: true,
-       httpOnly: false,
+       httpOnly: true,
+       maxAge: 1000 * 60 * 60
      });
      res.status(201).json({message: "Signed in Successfully", success: true, user});
      next()
   } catch(error){
     console.log(error)
+  }
+}
+
+module.exports.verifyUser = async(req, res) => {
+  const token = req.cookies.token
+  console.log(token)
+  if (!token) return res.json({user: null})
+  
+    try {
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY );
+    res.json(decoded );
+  } catch {
+    res.json({ user: null });
   }
 }
 
