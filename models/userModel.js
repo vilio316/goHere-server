@@ -1,7 +1,7 @@
 const { Schema, model } = require('mongoose')
 const bcrypt = require('bcrypt')
 
-const userTestSchema = new Schema({
+const userInfoSchema = new Schema({
     email:{
        type: String,
         required: true,
@@ -12,10 +12,10 @@ const userTestSchema = new Schema({
         required: true
     }
 })
-userTestSchema.pre('save', async function(){
+userInfoSchema.pre('save', async function(){
     this.password = await bcrypt.hash(this.password, 12)
 })
 
-const UserModel = model('users', userTestSchema)
+const UserModel = model('users_data', userInfoSchema)
 
 module.exports = UserModel
