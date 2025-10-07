@@ -6,11 +6,6 @@ const profileSchema = new Schema({
         unique: true,
         type: String
     }, 
-    locations: {
-        type: Object,
-        unique: false,
-        required: true
-    },
     username: {
         type: String,
         unique: true,

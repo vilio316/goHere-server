@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const { createSecretToken } = require('../utils/SecretToken')
+const LocationsModel = require('../models/userLocationSchema')
 
 module.exports.Signup = async(req, res, next) =>{
   try{
@@ -30,7 +31,6 @@ module.exports.SignUpProfile= async (req, res) => {
   try{
     const {email, username, locations} = req.body
     const user_profile = await UserProfile.create({email, locations, username})
-    console.log(user_profile)
     res.status(201).json({message: "Done!", success: true})
   }
   catch(error){
@@ -56,23 +56,24 @@ else(
 )
 }
 
-module.exports.findUser = async(req, res) => {
-  const {email} = req.body
+module.exports.locationGet = async (req, res) => {
+  const {query} = req.params
+  const foundUser = await LocationsModel.findOne({email: query})
+  res.json({message: 'Complete', foundUser})
+}
+
+module.exports.setupUserLocation = async (req, res) => {
+  const {email, locations} = req.body
   try{
-    const userDetails = await User.findOne({email})
-    console.log(userDetails.username)
-    if(userDetails == null){
-      res.json({message: "User details unavailable"})
-    }
-    else{
-    res.json({message: "Matching User found", userDetails})
-  }
+  const userAndLocations = await LocationsModel.create({email, locations})
+  res.status(201).json({message: "Gone!", success: true})
 }
   catch(error){
-    console.log(error, email)
-    res.status(404).json({message: 'User not found!'})
+    console.log(error)
+    res.status(500).json({message: 'Failed', success: false})
   }
 }
+
 
 module.exports.SignIn = async (req, res, next) => {
   try{
