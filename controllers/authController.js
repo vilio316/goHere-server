@@ -1,15 +1,17 @@
-const User = require('../models/userModel')
+const User = require('../models/userModelRefix') 
+const UserProfile = require('../models/userProfileModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 require('dotenv').config()
 const { createSecretToken } = require('../utils/SecretToken')
 
 module.exports.Signup = async(req, res, next) =>{
-    try{
+  try{
         const {email, password} = req.body;
         const existingUser = await User.findOne({email})
         if (existingUser) {return res.json({ message: "User already exists" });}
     const user = await User.create({ email, password });
+    
     const token = createSecretToken(user._id);
     res.cookie("token", token, {
       withCredentials: true,
@@ -22,6 +24,36 @@ module.exports.Signup = async(req, res, next) =>{
     catch(error){
         console.error(error)
     }
+}
+
+module.exports.SignUpProfile= async (req, res) => {
+  try{
+    const {email, username, locations} = req.body
+    const user_profile = await UserProfile.create({email, locations, username})
+    console.log(user_profile)
+    res.status(201).json({message: "Done!", success: true})
+  }
+  catch(error){
+    console.log(error)
+    res.status(401).json({message: "Not Done!", success: false})
+  }
+}
+
+module.exports.getUserDetails = async (req, res) => {
+  const {query} = req.params
+  if(query.length > 0){
+  try{    
+    const result = await UserProfile.findOne({email: query})
+    res.json({message: "Found", success: true, result})
+  }
+  catch(error){
+    console.log(error)
+    res.status(404).json({message: "404 Not Found", success: 'false'})
+  }
+}
+else(
+  res.status(404).json({message: "404 Not Found", success: false})
+)
 }
 
 module.exports.findUser = async(req, res) => {
