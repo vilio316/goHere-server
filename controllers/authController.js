@@ -56,6 +56,17 @@ else(
 )
 }
 
+module.exports.updateLocations = async(req, res) => {
+  const {email, newBody} = req.body
+  const requiredUser = await LocationsModel.findOne({email: email})
+  if(requiredUser){
+    requiredUser.locations = {locations: newBody};
+    requiredUser.save()
+    console.log(requiredUser)
+  }
+  res.json({message: "Update Successful"})
+}
+
 module.exports.locationGet = async (req, res) => {
   const {query} = req.params
   const foundUser = await LocationsModel.findOne({email: query})
