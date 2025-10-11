@@ -1,4 +1,4 @@
-const { Signup, SignIn, verifyUser, logOut, SignUpProfile, getUserDetails, setupUserLocation, locationGet, updateLocations } = require('../controllers/authController')
+const { Signup, SignIn, verifyUser, logOut, SignUpProfile, getUserDetails, setupUserLocation, locationGet, updateLocations, updateLocationsSave } = require('../controllers/authController')
 const router = require('express').Router()
 
 router.post('/sign-up', Signup)
@@ -9,6 +9,6 @@ router.post('/logout', logOut)
 router.get('/get-user/:query', getUserDetails )
 router.post('/add_location', setupUserLocation)
 router.get('/user_location/:query', locationGet)
-router.post('/update_locations', updateLocations)
+router.post('/update_locations', updateLocationsSave)
 
 module.exports = router
