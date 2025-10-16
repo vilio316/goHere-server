@@ -48,7 +48,7 @@ module.exports.getUserDetails = async (req, res) => {
   }
   catch(error){
     console.log(error)
-    res.status(404).json({message: "404 Not Found", success: 'false'})
+    res.status(404).json({message: "404 Not Found", success: false})
   }
 }
 else(
@@ -63,7 +63,7 @@ module.exports.updateLocationsSave = async(req, res) => {
     requiredUser.locations = {locations: newBody};
     requiredUser.save()
   }
-  res.json({message: "Update Successful"})
+  res.json({message: "Update Successful", success: true})
 }
 
 module.exports.locationGet = async (req, res) => {
@@ -127,6 +127,6 @@ module.exports.verifyUser = async(req, res) => {
 
 module.exports.logOut = async(req, res) => {
   res.clearCookie('token')
-  res.json({message: 'Logged out successfully'})
+  res.json({message: 'Logged out successfully', success: true})
 }
 
