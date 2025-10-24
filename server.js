@@ -20,7 +20,7 @@ async function mainMongConnect(){
 mainMongConnect()
 
 const {searchByTxt} = require('./maps_requests');
-const { searchFunction } = require('./geminiSetup');
+const { searchFunction, suggestLocation } = require('./geminiSetup');
 app.use(cookieParser())
 
 app.get('/api', (req, res) => {
@@ -45,6 +45,11 @@ app.get('/distance/:sourceLat/:sourceLong/:destLat/:destLong', async (req, res) 
 app.get('/ai/:search', async (req, res) => {
     const result = await searchFunction(req.params.search);
     res.json(JSON.parse(result))
+})
+
+app.get('/ai/suggest/:query', async (req, res) => {
+    const suggested_values = await suggestLocation(req.params.query)
+    res.json(JSON.parse(suggested_values))
 })
 
 app.get('/geocoded_location/:lat/:long', async(req, res) => {

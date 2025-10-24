@@ -93,11 +93,11 @@ module.exports.SignIn = async (req, res, next) => {
     }
     const user = await User.findOne({email})
     if(!user){
-      return res.status(401).json({message: 'Invalid username or password'})
+      return res.status(401).json({message: 'Invalid Username or Password'})
     }
     const authCheck = await bcrypt.compare(pwd, user.password)
     if(!authCheck){
-      return res.status(401).json({message: 'Incorrect password', success: false})
+      return res.status(401).json({message: 'Incorrect Password', success: false})
     }
     const user_token = createSecretToken(user._id)
     res.cookie("token", user_token, {
@@ -126,7 +126,7 @@ module.exports.verifyUser = async(req, res) => {
 }
 
 module.exports.logOut = async(req, res) => {
-  res.clearCookie('token')
+  res.clearCookie('token');
   res.json({message: 'Logged out successfully', success: true})
 }
 

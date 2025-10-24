@@ -22,4 +22,23 @@ async function searchFunction(param){
     return response.text
 }
 
-module.exports = {searchFunction}
+async function suggestLocation(param){
+    const response = await ai.models.generateContent({
+        contents: param, 
+       model: 'gemini-2.5-flash',
+         config:{
+            systemInstruction: "You are an AI functioning in a tourism companion app and will be suggesting locations for users to visit based on their previiously visited locations. For each location you receive, respond with the names of not more than two locations in a 30km radius whose offerings closely match those of the initial location ",
+            responseMimeType: 'application/json',
+            responseSchema: {
+                type: Type.ARRAY, 
+                items: {
+                    type: Type.STRING
+                }
+            }
+    },
+    })
+
+    return response.text
+}
+
+module.exports = {searchFunction, suggestLocation}
